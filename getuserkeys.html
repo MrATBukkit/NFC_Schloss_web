@@ -1,0 +1,131 @@
+<html>
+<head>
+<link rel="stylesheet" href="css/bootstrap-iconpicker.min.css"/>
+<script type="text/javascript" src="js/iconset/iconset-nfc.js"></script>
+<script type="text/javascript" src="js/bootstrap-iconpicker.min.js"></script>
+</head>
+<body>
+<div class="row">
+	<div class="col-sm-10">
+		<div class="table-responsive">
+		<table class="table table-hover" id="key-table">
+		<thead>
+			<tr>
+				<th><input id="selectallkey" class="form-check-input" type="checkbox"></th>
+				<th>Ger&auml;t</th>
+				<th>Name</th>
+				<th class="hidden-xs">Seriennummer</th>
+			</tr>
+		</thead>
+		<tbody id="keycontent"></tbody>
+		</table>
+		</div>
+	</div>
+	<div class="col-sm-2">
+		<div class="btn-group-vertical">
+			<button type="button" id="addkey" class="btn btn-default">Hinzuf&uuml;gen</button>
+			<button type="button" id="deletkey" class="btn btn-default">Entfernen</button>
+		</div>
+	</div>
+</div>
+<div id="keyedit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!--Inhalt-->
+	<div class="modal-content">
+		<div class="modal-header">
+			<h4 class="modal-title">Schl&uuml;ssel</h4>
+		</div>
+		<div class="modal-body">
+			<input type="hidden" id="keyid">
+			<div class="form-group">
+				<label for="bezeichnung">Bezeichnung:</label>
+				<div class="input-group">
+					<span class="input-group-btn">
+						<button id="selecticon" class="btn btn-default" data-icon="glyphicon-map-marker" role="iconpicker" data-header="false" data-footer="false"></button>
+					</span>
+					<input id="bezeichnung" type="text" class="form-control" placeholder="Bezeichnung">
+				</div>
+			</div>
+			<div class="alert alert-warning" id="bezeichnungalert">
+				Bitte Bezeichnung eingeben!
+			</div>
+			<div class="form-group">
+				<label for="Seriennummer">Seriennummer:</label>
+				<div class="input-group">
+					<input  placeholder="Seriennummer" type="Text" class="form-control" id="Seriennummer">	
+					<span class="input-group-btn">
+						<button id="serialauto" type="button" class="btn btn-default">Automatisch</button>
+					</span>
+				</div>
+				<div class="alert alert-warning" id="seriennummeralert">
+					Bitte Seriennummer eingeben!
+				</div>
+			</div>
+			<div id="keystatus"></div>
+		</div>
+		<div class="modal-footer">
+			<button id='deletedevice' class="btn btn-danger pull-left" id="authBtn"><span class="glyphicon glyphicon-trash"></span> L&ouml;schen</button>
+			<button class="btn btn-default" id="saveBtn"><span class="glyphicon glyphicon-floppy-disk"></span> Speichern</button>
+			<button class="btn btn-default" data-dismiss="modal">Schlie&szlig;en</button>
+		</div>
+	</div>
+  </div>
+</div>
+<script>
+function hidealert()
+{
+	$('#bezeichnungalert').hide();
+	$('#seriennummeralert').hide();
+}
+$.ajax({
+	url: "getkeys.php",
+	success: function(data){
+		$('#keycontent').html(data);
+	}
+});
+$('#deletkey').click(function(){
+if (confirm('Wirklich löschen')) {
+    $('.selectabelkey').each(function () {
+	   var id = (this.checked ? $(this).attr('id') : "");
+	   $.ajax({
+			url: "php/dbkey.php?methode=delet&id="+id,
+			success: function(data){
+				reloadkey();
+			}
+		});
+	});
+}
+});
+$('#serialauto').click(function() {
+	$('#Seriennummer').prop('disabled', true);
+	$('#serialauto').text("Warte auf Chip");
+	$.ajax({
+		url: "php/getserial.php",
+		success: function(data){
+			//console.log(data);
+			$('#Seriennummer').val(data)
+			$('#Seriennummer').prop('disabled', false);
+			$('#serialauto').text("Automatisch");
+		}
+	});
+});
+$('#deletedevice').click(function() {
+	var id = $('#keyid').val();
+	$.ajax({
+			url: "php/dbkey.php?methode=delet&id="+id,
+			success: function(data){
+				if (data == "")
+				{
+					$('#keyedit').modal('hide');
+					istoreload = true;
+				}
+				else
+				{
+					$('#keystatus').html(data);
+				}
+			}
+		});
+});
+</script>
+</body>
+</html>

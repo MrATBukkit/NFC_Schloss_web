@@ -1,0 +1,324 @@
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="./css/bootstrap.min.css">
+	<link rel="stylesheet" href="./css/custom.css">
+	<script src="./js/jquery.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+	<title>Erstelle Benutzer</title>
+	<style>
+	body {
+		margin-top: 25px;
+	}
+	.center {
+		align: center;
+	}
+	</style>
+	<script>
+	$(document).ready(function(){
+		hidealert();
+	});
+	function hidealert() {
+		$('#vornamealert').hide();
+		$('#nachnamealert').hide();
+		$('#emailalert').hide();
+		$('#emailvalidalert').hide();
+		$('#passwordalert').hide();
+		$('#passwordcheckalert').hide();
+		$('#passwordnotvalid').hide();
+	}
+	</script>
+</head>
+<body>
+	<div class="container text-center center">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<h1>Konto erstellen</h1>
+				<h4 id="hinweis">
+				Sie können hier einen Konto anlegen dieses muss aber erst von einen
+				Administtrator Aktiviert werden.
+				</h4>
+				<div class="form-group has-feedback" id="formvorname">
+					<label for="vorname">Vorname</label>
+					<input type="vorname" class="form-control" id="vorname"></input>
+					<i id="vornameicon" class="glyphicon glyphicon-remove form-control-feedback icon-danger"></i>
+					<div class='alert alert-warning' id="vornamealert">
+						<strong>Vorname!</strong> Bitte Vorname eingeben
+					</div>
+				</div>
+				<div class="form-group has-feedback" id="formnachname">
+					<label for="nachname">Nachname</label>
+					<input type="nachname" class="form-control" id="nachname"></input>
+					<i id="nachnameicon" class="glyphicon glyphicon-remove form-control-feedback icon-danger"></i>
+					<div class='alert alert-warning' id="nachnamealert">
+						<strong>Nachname!</strong> Bitte Nachname eingeben
+					</div>
+				</div>
+				<div class="form-group has-feedback" id="formemail">
+					<label for="email">Email</label>
+					<input type="email" class="form-control" id="email"></input>
+					<i id="emailicon" class="glyphicon glyphicon-remove form-control-feedback icon-danger"></i>
+					<div class='alert alert-warning' id="emailalert">
+						<strong>Email!</strong> Bitte Email eingeben
+					</div>
+					<div class='alert alert-warning' id="emailvalidalert">
+						<strong>Email!</strong> Bitte g&uuml;ltige Email eingeben
+					</div>
+				</div>
+				<div class="form-group has-feedback" id="formpassword">
+					<label for="password">Passwort</label>
+					<input type="password" class="form-control" id="password"></input>
+					<i id="passwordicon" class="glyphicon glyphicon-remove form-control-feedback icon-danger"></i>
+					<div class="progress">
+						<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+						0%
+						</div>
+					</div>
+					<div class='alert alert-warning' id="passwordalert">
+						<strong>Passwort!</strong> Bitte Passwort eingeben
+					</div>
+					<div class='alert alert-warning' id="passwordnotvalid">
+						<strong>Passwort!</strong> Das Password ist zu schwach
+					</div>
+				</div>
+				<div class="form-group has-feedback" id="formpasswordcheck">
+					<label for="passwordcheck">Passwort best&auml;tigen</label>
+					<input type="password" class="form-control" id="passwordcheck"></input>
+					<i id="passwordcheckicon" class="glyphicon glyphicon-remove form-control-feedback icon-danger"></i>
+					<div class='alert alert-warning' id="passwordcheckalert">
+						<strong>Passwort!</strong> Passwort stimmt nicht &uuml;berein
+					</div>
+				</div>
+				<button class="btn btn-default" id="creatuserbtn">Anfrage stellen</button>
+			</div>
+			<div class="col-md-3"></div>
+		</div>
+		<div class="row toplittel">
+			<div class="col-md-3"></div>
+			<div class="col-md-6" id="creatuserstatus"></div>
+			<div class="col-md-3"></div>
+		</div>
+	</div>
+	<script>
+	var passwordvalid = false;
+	function setprogbar(valeu) {
+		checkdata();
+		if (valeu <= 70)
+		{
+			passwordvalid = false;
+			$('.progress-bar').removeClass('progress-bar-success').addClass('progress-bar-danger');
+		}
+		else
+		{
+			passwordvalid = true;
+			$('.progress-bar').removeClass('progress-bar-danger').addClass('progress-bar-success');
+		}
+		$('.progress-bar').css('width', valeu+'%').attr('aria-valuenow', valeu);  
+		$('.progress-bar').text(valeu + " %");
+	}
+	function seticonremove(element)
+	{
+		element.removeClass('icon-success').addClass('icon-danger').removeClass('glyphicon-ok').addClass('glyphicon-remove');
+	}
+	function seticonok(element)
+	{
+		element.removeClass('icon-danger').addClass('icon-success').removeClass('glyphicon-remove').addClass('glyphicon-ok');
+	}
+	function inputfeedbacksetstandart()
+	{
+		seticonremove($('#vornameicon'));
+		seticonremove($('#nachnameicon'));
+		seticonremove($('#emailicon'));
+		seticonremove($('#passwordicon'));
+		seticonremove($('#passwordcheckicon'));
+	}	
+	function checkdata(alert = false) {
+		inputfeedbacksetstandart();
+		hidealert();
+		var vorname = $('#vorname').val();
+		var stop = false;
+		if ($.trim(vorname).length <= 3)
+		{
+			if (alert == true)
+			{
+				$('#vornamealert').show();
+			}
+			stop = true;
+		}
+		else
+		{
+			seticonok($('#vornameicon'))
+		}
+		
+		var nachname = $('#nachname').val();
+		if ($.trim(nachname).length <= 3)
+		{
+			if (alert == true)
+			{
+				$('#nachnamealert').show();
+			}
+			stop = true;
+		}
+		else
+		{
+			seticonok($('#nachnameicon'))
+		}
+		
+		var email = $('#email').val();
+		if ($.trim(email).length <= 3)
+		{
+			if (alert == true)
+			{
+				$('#emailalert').show();
+			}
+			stop = true;
+		}
+		else
+		{
+			if (email.indexOf("@") === -1)
+			{
+				if (alert == true)
+				{
+					$('#emailvalidalert').show();
+				}
+				stop = false;
+			}
+			else
+			{
+				if (email.indexOf(".") === -1)
+				{
+					if (alert == true)
+					{
+						$('#emailvalidalert').show();
+					}
+					stop = true;
+				}
+				else
+				{
+					seticonok($('#emailicon'));
+				}
+			}
+		}
+		
+		var password = $('#password').val();
+		if ($.trim(password).length <= 3)
+		{
+			if (alert == true)
+			{
+				$('#passwordalert').show();
+			}
+			stop = true;
+		}
+		else
+		{
+			if (passwordvalid == false)
+			{
+				if (alert == true)
+				{
+					$('#passwordnotvalid').show();
+				}
+				stop = true;
+			}
+			else
+			{
+				seticonok($('#passwordicon'));
+			}
+		}
+		
+		var passwordcheck = $('#passwordcheck').val();
+		if (passwordcheck != password)
+		{
+			if (alert == true)
+			{
+				$('#passwordcheckalert').show();
+			}
+			stop = true;
+		}
+		else
+		{
+			if ($.trim(password).length != 0)
+			{
+				seticonok($('#passwordcheckicon'));
+			}
+		}
+		return stop;
+	}
+	$("#vorname").on("change paste keyup", function() {
+		checkdata();
+	});
+	$("#nachname").on("change paste keyup", function() {
+		checkdata();
+	});
+	$("#email").on("change paste keyup", function() {
+		checkdata();
+	});
+	$("#passwordcheck").on("change paste keyup", function() {
+		checkdata();
+	});
+	$("#password").on("change paste keyup", function() {
+		var pw = $(this).val();
+		var punkte = 0;
+		//Punkte verteilung
+		var lang5 = 5;
+		var lang12 = 7;
+		var uppercase = 4;
+		var littelcase = 4;
+		var num = 4;
+		var specialchar = 5;
+		if (pw.length >= 5)
+		{
+			punkte += lang5;
+		}
+		if (pw.length >= 12)
+		{
+			punkte += lang12;
+		}
+		if (pw.match(/[A-Z]/))
+		{
+			punkte += uppercase;
+		}
+		if (pw.match(/[a-z]/))
+		{
+			punkte += littelcase;
+		}
+		if (pw.match(/[0-9]/))
+		{
+			punkte += num;
+		}
+		if (/^[a-zA-Z0-9- ]*$/.test(pw) == false)
+		{
+			punkte +=specialchar;
+		}
+		prozent = Math.round(punkte / (lang5 + lang12 + uppercase + littelcase + num + specialchar) *100);
+		setprogbar(prozent);
+	});
+	$('#creatuserbtn').click(function() {
+		if (!checkdata(true))
+		{
+			var vorname = $('#vorname').val();
+			var nachname = $('#nachname').val();
+			var email = $('#email').val();
+			var password = $('#password').val();
+			var dataString = "vorname="+vorname+"&nachname="+
+			nachname+"&email="+email+"&password="+password;
+			$.ajax({
+				type: "POST",
+				url: "./creatuser.php",
+				data: dataString,
+				beforeSend: function(){ $("#authBtn").val('checking...');},
+				success: function(data){
+					$('#creatuserstatus').html(data);
+					if (data.indexOf('<img') !== -1)
+					{
+						$('#creatuserbtn').hide();
+						$('.form-group').hide();
+						$('#hinweis').hide();
+					}
+				}
+			});
+		}
+	});
+</script>
+</body>
+</html>
